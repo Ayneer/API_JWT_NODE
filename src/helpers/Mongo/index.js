@@ -40,7 +40,8 @@ const conectar = async () => {
             ssl: credenciales.MONGO_SSL == '1' ? true : false,
             authSource: credenciales.MONGO_AUTH_SOURCE,
             useNewUrlParser: true,
-            useUnifiedTopology: true
+            useUnifiedTopology: true,
+            useFindAndModify: false
         });
 
         console.log(`Conectado con éxito hacia ${credenciales.MONGO_URL}`);

@@ -9,9 +9,9 @@ let respuesta = {
     tipoError: null
 };
 
-const crearUsuario = async usuario_objeto => {
+const crear = async usuario => {
 
-    const { ERROR_INTERNO, EXITO_OPERACION, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR } = process.env;
+    const { ERROR_INTERNO, EXITO_OPERACION, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR} = process.env;
 
     respuesta = {
         error: null,
@@ -23,31 +23,24 @@ const crearUsuario = async usuario_objeto => {
     }
 
     try {
+        let nuevo_usuario = new usuario_modelo(usuario);
+        const resultado = await nuevo_usuario.save();
 
-        const { identificacion, correo } = usuario_objeto;
-        const buscarUsuario = await existeUsuario(identificacion, correo);
-
-        //Si no existe un usuario con la identificación y el correo enviado, se procede a su almacenamiento
-        if (!buscarUsuario.data) {
-
-            let usuario = new usuario_modelo(usuario_objeto);
-            const resultado = await usuario.save();
-
+        //Si no hubo error al crear el usuario
+        if (resultado) {
             respuesta.error = false;
             respuesta.data = resultado;
             respuesta.status = EXITO_OPERACION;
-
         } else {
             respuesta.error = true;
-            respuesta.codigoError = "ValidacionUsuario";
+            respuesta.codigoError = CODIGO_BUSQUEDA;
             respuesta.status = FALLA_OPERACION;
-            respuesta.mensajeError = "Ya existe un usuario con la identificación y/o correo enviado";
+            respuesta.mensajeError = "No existe una autenticación con el correo enviado.";
             respuesta.tipoError = VALIDACION_REGISTRO_ERROR;
         }
-
     } catch (error) {
         respuesta.error = true;
-        respuesta.codigoError = error.name;
+        respuesta.codigoError = error.code;
         respuesta.status = ERROR_INTERNO;
         respuesta.mensajeError = error.message;
         respuesta.tipoError = error._message;
@@ -76,7 +69,7 @@ const existeUsuario = async (identificacion, correo) => {
         respuesta.status = EXITO_OPERACION;
     } catch (error) {
         respuesta.error = true;
-        respuesta.codigoError = error.name;
+        respuesta.codigoError = error.code;
         respuesta.status = ERROR_INTERNO;
         respuesta.mensajeError = error.message;
         respuesta.tipoError = error._message;
@@ -86,7 +79,160 @@ const existeUsuario = async (identificacion, correo) => {
 
 }
 
+const editar = async (identificacion, actualizacion) => {
+
+    const { ERROR_INTERNO, EXITO_OPERACION, CODIGO_ACTUALIZACION, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR } = process.env;
+
+    respuesta = {
+        error: null,
+        data: null,
+        codigoError: null,
+        status: null,
+        mensajeError: null,
+        tipoError: null
+    }
+
+    if (identificacion && actualizacion) {
+        try {
+            const resultado = await usuario_modelo.findOneAndUpdate({ identificacion }, actualizacion, { new: true });
+
+            respuesta.error = false;
+            respuesta.data = resultado;
+            respuesta.status = EXITO_OPERACION;
+
+        } catch (error) {
+            respuesta.error = true;
+            respuesta.codigoError = error.code;
+            respuesta.status = ERROR_INTERNO;
+            respuesta.mensajeError = error.message;
+            respuesta.tipoError = error._message;
+        }
+    } else {
+        respuesta.error = true;
+        respuesta.codigoError = CODIGO_ACTUALIZACION;
+        respuesta.status = FALLA_OPERACION;
+        respuesta.mensajeError = "Debe enviar la identificación y datos de actualización del usuario";
+        respuesta.tipoError = VALIDACION_REGISTRO_ERROR;
+    }
+
+    return respuesta;
+}
+
+const eliminar = async identificacion => {
+
+    const { ERROR_INTERNO, EXITO_OPERACION, CODIGO_ELIMINACION, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR } = process.env;
+
+    respuesta = {
+        error: null,
+        data: null,
+        codigoError: null,
+        status: null,
+        mensajeError: null,
+        tipoError: null
+    }
+
+    if (identificacion) {
+        try {
+
+            const resultado = await usuario_modelo.findOneAndDelete({ identificacion });
+
+            if (resultado) {
+                respuesta.error = false;
+                respuesta.data = resultado;
+                respuesta.status = EXITO_OPERACION;
+            } else {
+                respuesta.error = true;
+                respuesta.codigoError = CODIGO_ELIMINACION;
+                respuesta.status = FALLA_OPERACION;
+                respuesta.mensajeError = "No existe el usuario con la identificación enviada";
+                respuesta.tipoError = VALIDACION_REGISTRO_ERROR;
+            }
+
+        } catch (error) {
+            respuesta.error = true;
+            respuesta.codigoError = error.code;
+            respuesta.status = ERROR_INTERNO;
+            respuesta.mensajeError = error.message;
+            respuesta.tipoError = error._message;
+        }
+    } else {
+        respuesta.error = true;
+        respuesta.codigoError = CODIGO_ELIMINACION;
+        respuesta.status = FALLA_OPERACION;
+        respuesta.mensajeError = "Debe enviar la identificación del usuario";
+        respuesta.tipoError = VALIDACION_REGISTRO_ERROR;
+    }
+
+    return respuesta;
+}
+
+const listar = async () => {
+
+    const { ERROR_INTERNO, EXITO_OPERACION } = process.env;
+
+    respuesta = {
+        error: null,
+        data: null,
+        codigoError: null,
+        status: null,
+        mensajeError: null,
+        tipoError: null
+    }
+
+    try {
+        const resultado = await usuario_modelo.find({});
+
+        respuesta.error = false;
+        respuesta.data = resultado;
+        respuesta.status = EXITO_OPERACION;
+
+    } catch (error) {
+        respuesta.error = true;
+        respuesta.codigoError = error.code;
+        respuesta.status = ERROR_INTERNO;
+        respuesta.mensajeError = error.message;
+        respuesta.tipoError = error._message;
+    }
+
+    return respuesta;
+}
+
+const buscar = async identificacion => {
+
+    const { ERROR_INTERNO, EXITO_OPERACION } = process.env;
+
+    respuesta = {
+        error: null,
+        data: null,
+        codigoError: null,
+        status: null,
+        mensajeError: null,
+        tipoError: null
+    }
+
+    try {
+        const resultado = await usuario_modelo.findOne({ identificacion });
+
+        respuesta.error = false;
+        respuesta.data = resultado;
+        respuesta.status = EXITO_OPERACION;
+
+    } catch (error) {
+        respuesta.error = true;
+        respuesta.codigoError = error.code;
+        respuesta.status = ERROR_INTERNO;
+        respuesta.mensajeError = error.message;
+        respuesta.tipoError = error._message;
+    }
+
+    return respuesta;
+}
+
 module.exports = {
-    crearUsuario,
-    existeUsuario
+    crear,
+    existeUsuario,
+    editar,
+    eliminar,
+    listar,
+    buscar,
 }
