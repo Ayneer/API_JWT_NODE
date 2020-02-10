@@ -15,7 +15,7 @@ routes.put('/autenticacion/:id_identificacion', cAutenticacion.actualizar);
 routes.post('/usuario', cUsuario.crear);
 routes.put('/usuario', cUsuario.actualizar);
 routes.delete('/usuario/:identificacion', cUsuario.eliminar);
-routes.get('/usuarios', cUsuario.listar);
+routes.get('/usuarios', cAutenticacion.autenticar, cUsuario.listar);
 routes.get('/usuario/:identificacion', cUsuario.buscar);
 
 //Rutas para funcionalidades del modelo tipoDocumento

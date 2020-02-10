@@ -31,10 +31,9 @@ const buscarUsuarioAsociado = async id_identificacion => {
         if (autenticacion) {
 
             const usuario = await repositorio.buscar(autenticacion.id_identificacion);
-
             respuesta.error = false;
             respuesta.data = {
-                ...usuario,
+                ...usuario.data._doc,
                 correo: autenticacion.correo,
                 id_rol: autenticacion.id_rol,
             }
@@ -54,7 +53,6 @@ const buscarUsuarioAsociado = async id_identificacion => {
         respuesta.mensajeError = error.message;
         respuesta.tipoError = error._message;
     }
-
     return respuesta;
 }
 

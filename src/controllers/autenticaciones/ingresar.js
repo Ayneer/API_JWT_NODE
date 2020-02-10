@@ -3,12 +3,13 @@ const jwt = require('jsonwebtoken');
 const middlewares = require('../../middlewares');
 
 const handler = (req, res, next) => {
-    const { KEY_JWT, CREDENCIALES_INVALIDAS } = process.env;
+    const { KEY_JWT, CREDENCIALES_INVALIDAS, ALGORITHM } = process.env;
 
     passport.authenticate("local", { session: false }, (error, usuario, message) => {
         console.log("ejecutando *callback auth* de authenticate para estrategia local");
 
         if (error || !usuario) {
+            console.log(message)
             next(middlewares.lanzarError(message.message, CREDENCIALES_INVALIDAS));
         } else {
             console.log("*** comienza generacion token*****");
