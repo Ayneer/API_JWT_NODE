@@ -1,4 +1,4 @@
-const repositorio = require('../../repositories/tipoDocumentos');
+const repositorio = require('../../repositories/rol');
 const funciones = require('../funciones');
 
 const handler = async (req, res, next) => {

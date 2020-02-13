@@ -1,4 +1,5 @@
 const usuario_modelo = require('../../models/Usuario');
+const repositorio_tipo_documento = require('../tipoDocumentos');
 
 let respuesta = {
     error: null,
@@ -11,7 +12,7 @@ let respuesta = {
 
 const crear = async usuario => {
 
-    const { ERROR_INTERNO, EXITO_OPERACION, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR} = process.env;
+    const { ERROR_INTERNO, EXITO_OPERACION, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR } = process.env;
 
     respuesta = {
         error: null,
@@ -168,7 +169,7 @@ const eliminar = async identificacion => {
 
 const listar = async () => {
 
-    const { ERROR_INTERNO, EXITO_OPERACION } = process.env;
+    const { ERROR_INTERNO, EXITO_OPERACION, CODIGO_BUSQUEDA, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR } = process.env;
 
     respuesta = {
         error: null,
@@ -182,9 +183,33 @@ const listar = async () => {
     try {
         const resultado = await usuario_modelo.find({});
 
-        respuesta.error = false;
-        respuesta.data = resultado;
-        respuesta.status = EXITO_OPERACION;
+        if (resultado && resultado.length > 0) {
+            let listaUsuarios = [];
+            const { data } = await repositorio_tipo_documento.listar();
+
+            for (let index = 0; index < resultado.length; index++) {
+                const element = parseInt(resultado[index].id_identificacion);
+                for (let index2 = 0; index2 < data.length; index2++) {
+                    const element2 = data[index2];
+                    if (element === element2.tipo_identificacion) {
+                        listaUsuarios.push({
+                            ...resultado[index]._doc,
+                            ...element2._doc
+                        });
+                        break;
+                    }
+                }
+            }
+            respuesta.error = false;
+            respuesta.data = listaUsuarios;
+            respuesta.status = EXITO_OPERACION;
+        } else {
+            respuesta.error = true;
+            respuesta.codigoError = CODIGO_BUSQUEDA;
+            respuesta.status = FALLA_OPERACION;
+            respuesta.mensajeError = "No existen usuarios.";
+            respuesta.tipoError = VALIDACION_REGISTRO_ERROR;
+        }
 
     } catch (error) {
         respuesta.error = true;
@@ -199,7 +224,7 @@ const listar = async () => {
 
 const buscar = async identificacion => {
 
-    const { ERROR_INTERNO, EXITO_OPERACION } = process.env;
+    const { ERROR_INTERNO, EXITO_OPERACION, CODIGO_BUSQUEDA, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR } = process.env;
 
     respuesta = {
         error: null,
@@ -213,9 +238,20 @@ const buscar = async identificacion => {
     try {
         const resultado = await usuario_modelo.findOne({ identificacion });
 
-        respuesta.error = false;
-        respuesta.data = resultado;
-        respuesta.status = EXITO_OPERACION;
+        if (resultado) {
+
+            const dataIdentificacion = await repositorio_tipo_documento.buscar(parseInt(resultado.id_identificacion));
+
+            respuesta.error = false;
+            respuesta.data = { ...resultado._doc, ...dataIdentificacion.data._doc };
+            respuesta.status = EXITO_OPERACION;
+        } else {
+            respuesta.error = true;
+            respuesta.codigoError = CODIGO_BUSQUEDA;
+            respuesta.status = FALLA_OPERACION;
+            respuesta.mensajeError = "No existe una usuario con la identificación enviada.";
+            respuesta.tipoError = VALIDACION_REGISTRO_ERROR;
+        }
 
     } catch (error) {
         respuesta.error = true;

@@ -9,17 +9,17 @@ const handler = (req, res, next) => {
         console.log("ejecutando *callback auth* de authenticate para estrategia local");
 
         if (error || !usuario) {
-            console.log(message)
-            next(middlewares.lanzarError(message.message, CREDENCIALES_INVALIDAS));
+            let mensaje = message && message.message ? message.message : "Error en las credenciales";
+            next(middlewares.lanzarError(mensaje, CREDENCIALES_INVALIDAS));
         } else {
             console.log("*** comienza generacion token*****");
             const payload = {
-                sub: usuario.id_identificacion,
-                // exp: Date.now() + parseInt(process.env.JWT_LIFETIME),
+                sub: usuario.identificacion,
+                // exp: Date.now() + parseInt(120000),
                 username: usuario.correo
             };
-            const token = jwt.sign(JSON.stringify(payload), KEY_JWT);
-            res.json({ data: { token: token } });
+            const token = jwt.sign(payload, KEY_JWT, {expiresIn: 86400});//exp => 1h
+            res.json({ data: { token: token, usuario } });
         }
     })(req, res);
 }

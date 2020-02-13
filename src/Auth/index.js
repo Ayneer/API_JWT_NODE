@@ -21,7 +21,9 @@ passport.use(new estrategiaLocal({
         }else if(!respuesta.error && !bcrypt.compareSync(password, respuesta.data.contraseña)){//Las contraseñas no coinciden
             return done(null, false, { message: 'Usuario y/o contraseña incorrectas.' });
         }else if(!respuesta.error){//Log in con éxito!
-            return done(null, respuesta.data);
+            const usuario = await repositorio.buscarUsuarioAsociado(respuesta.data.id_identificacion);
+            // console.log(usuario)
+            return done(null, usuario.data);
         }
 
     } catch (error) {
@@ -38,6 +40,7 @@ opciones.secretOrKey = KEY_JWT;
 
 passport.use(new jwtEstrategia(opciones, async (jwt_payload, done)=>{
     console.log("ejecutando *callback verify* de estategia jwt");
+    // console.log(jwt_payload)
     try {
         const respuesta = await repositorio.buscarUsuarioAsociado(jwt_payload.sub);
         if(respuesta.error && respuesta.codigoError === CODIGO_BUSQUEDA){//No existe el usuario

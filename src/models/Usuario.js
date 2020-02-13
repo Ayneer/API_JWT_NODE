@@ -14,12 +14,4 @@ const usuarioSchema = new schema({
 
 const usuarios = mongoose.model('usuarios', usuarioSchema);
 
-usuarios.watch().on('change', data => {
-    console.log(`¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡ Cambio en la base de datos !!!!!!!!!!!!!!`)
-    // console.log(`Nombre de la base de datos: ${data.ns.db}`)
-    // console.log(`Nombre de la coleccion: ${data.ns.coll}`)
-    // console.log(data.fullDocument)
-    // console.log(data)
-});
-
 module.exports = usuarios;
