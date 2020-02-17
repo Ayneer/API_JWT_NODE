@@ -3,6 +3,7 @@ const actualizar = require('./editar');
 const eliminar = require('./eliminar');
 const listar = require('./listar');
 const buscar = require('./buscar');
+const listarCompletos = require('./listarCompletos');
 
 module.exports = {
     crear,
@@ -10,4 +11,5 @@ module.exports = {
     eliminar,
     listar,
     buscar,
+    listarCompletos,
 };

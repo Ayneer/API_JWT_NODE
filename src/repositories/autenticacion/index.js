@@ -1,5 +1,6 @@
 const autenticacion_modelo = require('../../models/Autenticacion');
-const repositorio = require('../usuario');
+const repositorio_usuario = require('../usuario');
+const repositorio_rol = require('../rol');
 
 let respuesta = {
     error: null,
@@ -29,14 +30,15 @@ const buscarUsuarioAsociado = async id_identificacion => {
 
         //Si existe dicha autenticación, se procede a buscar el usuario al cual representa
         if (autenticacion) {
-
-            const usuario = await repositorio.buscar(autenticacion.id_identificacion);
+            const usuario = await repositorio_usuario.buscar(autenticacion.id_identificacion);//datos del usuario
+            const rol = await repositorio_rol.buscar(autenticacion.id_rol);//datos del rol
             
             respuesta.error = false;
             respuesta.data = {
                 ...usuario.data,
                 correo: autenticacion.correo,
                 id_rol: autenticacion.id_rol,
+                ...rol.data._doc
             }
             respuesta.status = EXITO_OPERACION;
 
@@ -48,12 +50,71 @@ const buscarUsuarioAsociado = async id_identificacion => {
             respuesta.tipoError = VALIDACION_REGISTRO_ERROR;
         }
     } catch (error) {
+        console.log(error)
         respuesta.error = true;
         respuesta.codigoError = error.code;
         respuesta.status = ERROR_INTERNO;
         respuesta.mensajeError = error.message;
         respuesta.tipoError = error._message;
     }
+    return respuesta;
+}
+
+const listar = async () => {
+
+    const { ERROR_INTERNO, EXITO_OPERACION, CODIGO_BUSQUEDA, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR } = process.env;
+
+    respuesta = {
+        error: null,
+        data: null,
+        codigoError: null,
+        status: null,
+        mensajeError: null,
+        tipoError: null
+    }
+
+    try {
+        const resultado = await autenticacion_modelo.find({});
+
+        if (resultado && resultado.length > 0) {
+            let listaAutenticacion = [];
+            const { data } = await repositorio_rol.listar();
+
+            for (let index = 0; index < resultado.length; index++) {
+                const element = parseInt(resultado[index].id_rol);
+                for (let index2 = 0; index2 < data.length; index2++) {
+                    const element2 = data[index2];
+                    if (element === element2.id_rol) {
+                        listaAutenticacion.push({
+                            ...resultado[index]._doc,
+                            ...element2._doc
+                        });
+                        break;
+                    }
+                }
+            }
+            for (let index = 0; index < listaAutenticacion.length; index++) {
+                const element = listaAutenticacion[index];
+                delete element['contraseña'];
+            }
+            respuesta.data = listaAutenticacion;
+            respuesta.status = EXITO_OPERACION;
+        } else {
+            respuesta.error = true;
+            respuesta.codigoError = CODIGO_BUSQUEDA;
+            respuesta.status = FALLA_OPERACION;
+            respuesta.mensajeError = "No existen autenticaciones.";
+            respuesta.tipoError = VALIDACION_REGISTRO_ERROR;
+        }
+
+    } catch (error) {
+        respuesta.error = true;
+        respuesta.codigoError = error.code;
+        respuesta.status = ERROR_INTERNO;
+        respuesta.mensajeError = error.message;
+        respuesta.tipoError = error._message;
+    }
+
     return respuesta;
 }
 
@@ -77,8 +138,13 @@ const buscar = async correo => {
         //Si existe dicha autenticación
         if (autenticacion) {
 
+            const rol = await repositorio_rol.buscar(autenticacion.id_rol);//datos del rol
+            
             respuesta.error = false;
-            respuesta.data = autenticacion;
+            respuesta.data = {
+                ...autenticacion._doc,
+                ...rol.data._doc
+            };
             respuesta.status = EXITO_OPERACION;
 
         } else {
@@ -234,4 +300,5 @@ module.exports = {
     crear,
     eliminar,
     editar,
+    listar,
 }

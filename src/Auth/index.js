@@ -33,7 +33,7 @@ passport.use(new estrategiaLocal({
     
 }));
 
-const { KEY_JWT = 'SIOS_ARCHIVOS@NODE--', CODIGO_BUSQUEDA = 'BUSQUEDA DEL REGISTRO' } = process.env;
+const { KEY_JWT = 'SIOS_ARCHIVOS@NODE--',} = process.env;
 let opciones = {};
 opciones.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opciones.secretOrKey = KEY_JWT;
@@ -43,7 +43,8 @@ passport.use(new jwtEstrategia(opciones, async (jwt_payload, done)=>{
     // console.log(jwt_payload)
     try {
         const respuesta = await repositorio.buscarUsuarioAsociado(jwt_payload.sub);
-        if(respuesta.error && respuesta.codigoError === CODIGO_BUSQUEDA){//No existe el usuario
+        // console.log(respuesta)
+        if(respuesta.error){//No existe el usuario
             return done(null, false, {message: respuesta.mensajeError});
         }else if(!respuesta.error){//Usuario encontrado
             return done(null, respuesta.data);

@@ -20,6 +20,8 @@ const handler = async (req, res, next) => {
             telefono,
             id_identificacion
         };
+        let autenticacionObj = {};
+        let usuarioObj = {};
         
         const autenticacion = {
             correo,
@@ -29,10 +31,11 @@ const handler = async (req, res, next) => {
         };
 
         respuesta = await Rep_usuario.crear(usuario);
-        
+        usuarioObj = await Rep_usuario.buscar(identificacion);
         if(!respuesta.error){//Si no hubo error al crear al usuario
             respuesta = {};
             respuesta = await Rep_autenticacion.crear(autenticacion);
+            autenticacionObj = await Rep_autenticacion.buscar(correo);
             if(!respuesta.error){//Si no hubo error al crear la autenticacion
                 status = funciones.obtenerStatus(respuesta.status);
             }else{
@@ -44,8 +47,15 @@ const handler = async (req, res, next) => {
         }else{
             status = funciones.obtenerStatus(respuesta.status);
         }
-
-        res.status(status).send(respuesta);
+        let usuarioCompleto = {
+            ...usuarioObj.data,
+            ...autenticacionObj.data
+        }
+        delete usuarioCompleto['contraseña'];
+        res.status(status).send({
+            ...respuesta,
+            usuarioCompleto
+        });
 
     } catch (error) {
         next(error);

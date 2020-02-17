@@ -48,17 +48,17 @@ const conectar = async () => {
 
         const connection = mongoose.connection;
         /* istanbul ignore next */
-        connection.on('connecting', () => console.info('Conectando a mongodb'));
+        // connection.on('connecting', () => console.info('Conectando a mongodb'));
         /* istanbul ignore next */
-        connection.on('disconnecting', () => console.info('Desconectando de mongodb'));
+        // connection.on('disconnecting', () => console.info('Desconectando de mongodb'));
         /* istanbul ignore next */
-        connection.on('disconnected', () => console.info('Desconectado de mongodb'));
+        // connection.on('disconnected', () => console.info('Desconectado de mongodb'));
         /* istanbul ignore next */
-        connection.on('close', () => console.info('Conección a Mongodb cerrada'));
+        // connection.on('close', () => console.info('Conección a Mongodb cerrada'));
         /* istanbul ignore next */
-        connection.on('error', err => console.info('Error al conectar a mongodb', err.message));
+        // connection.on('error', err => console.info('Error al conectar a mongodb', err.message));
         /* istanbul ignore next */
-        connection.on('reconnected', () => console.info('recinexión a Mongodb con éxito!'));
+        // connection.on('reconnected', () => console.info('recinexión a Mongodb con éxito!'));
 
         return true;
     } catch (error) {

@@ -10,6 +10,7 @@ const cRol = require('./controllers/roles');
 //Rutas para las funcionalidades de la autenticación
 routes.post('/login', cAutenticacion.ingresar);
 routes.get('/sesion', cAutenticacion.autenticar, cAutenticacion.buscar);
+routes.get('/autenticaciones', cAutenticacion.listar);
 routes.delete('/autenticacion/:id_identificacion', cAutenticacion.eliminar);
 routes.put('/autenticacion/:id_identificacion', cAutenticacion.actualizar);
 
@@ -18,6 +19,7 @@ routes.post('/usuario', cUsuario.crear);
 routes.put('/usuario', cUsuario.actualizar);
 routes.delete('/usuario/:identificacion', cUsuario.eliminar);
 routes.get('/usuarios', cAutenticacion.autenticar, cUsuario.listar);
+routes.get('/usuariosCompleto', cAutenticacion.autenticar, cUsuario.listarCompletos);
 routes.get('/usuario/:identificacion', cUsuario.buscar);
 
 //Rutas para funcionalidades del modelo tipoDocumento

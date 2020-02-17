@@ -1,6 +1,5 @@
 const usuario_modelo = require('../../models/Usuario');
 const repositorio_tipo_documento = require('../tipoDocumentos');
-
 let respuesta = {
     error: null,
     data: null,
@@ -29,6 +28,7 @@ const crear = async usuario => {
 
         //Si no hubo error al crear el usuario
         if (resultado) {
+            
             respuesta.error = false;
             respuesta.data = resultado;
             respuesta.status = EXITO_OPERACION;
@@ -186,7 +186,7 @@ const listar = async () => {
         if (resultado && resultado.length > 0) {
             let listaUsuarios = [];
             const { data } = await repositorio_tipo_documento.listar();
-
+            
             for (let index = 0; index < resultado.length; index++) {
                 const element = parseInt(resultado[index].id_identificacion);
                 for (let index2 = 0; index2 < data.length; index2++) {
@@ -223,7 +223,7 @@ const listar = async () => {
 }
 
 const buscar = async identificacion => {
-
+    
     const { ERROR_INTERNO, EXITO_OPERACION, CODIGO_BUSQUEDA, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR } = process.env;
 
     respuesta = {
