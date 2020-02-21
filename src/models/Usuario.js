@@ -8,6 +8,7 @@ const usuarioSchema = new schema({
     telefono: {type: Number, required: true},
     identificacion: {type: Number, required: true, index: true, unique: true},
     id_identificacion: {type: String, required: true},// 1, 2, 3 => CC, TI, ...
+    id_empresa: {type: String, required: true},
 }, {
     timestamps: true //Guarda la fecha de cración o modificación de la Schema.
 });

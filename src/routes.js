@@ -15,9 +15,9 @@ routes.delete('/autenticacion/:id_identificacion', cAutenticacion.eliminar);
 routes.put('/autenticacion/:id_identificacion', cAutenticacion.actualizar);
 
 //Rutas para funcionalidades del modelo usuario
-routes.post('/usuario', cUsuario.crear);
+routes.post('/usuario', cUsuario.handlerCrear);
 routes.put('/usuario', cUsuario.actualizar);
-routes.delete('/usuario/:identificacion', cUsuario.eliminar);
+routes.delete('/usuario/:identificacion', cUsuario.handlerEliminar);
 routes.get('/usuarios', cAutenticacion.autenticar, cUsuario.listar);
 routes.get('/usuariosCompleto', cAutenticacion.autenticar, cUsuario.listarCompletos);
 routes.get('/usuario/:identificacion', cUsuario.buscar);

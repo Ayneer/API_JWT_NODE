@@ -2,6 +2,8 @@ const repositorio = require('../../repositories/usuario');
 const Rep_autenticacion = require('../../repositories/autenticacion');
 const funciones = require('../funciones');
 
+const eliminar = async identificacion => await repositorio.eliminar(identificacion);
+
 const handler = async (req, res, next) => {
 
     let status = 500;
@@ -10,7 +12,7 @@ const handler = async (req, res, next) => {
     try {
 
         const {identificacion} = req.params;
-        respuesta = await repositorio.eliminar(identificacion);
+        respuesta = await eliminar(identificacion);
 
         if(!respuesta.error){//Si no hubo algun error eliminando al usuario
             //Se procede a eliminar su autenticación
@@ -27,4 +29,4 @@ const handler = async (req, res, next) => {
 
 };
 
-module.exports = handler;
+module.exports = {handler, eliminar};

@@ -43,7 +43,6 @@ passport.use(new jwtEstrategia(opciones, async (jwt_payload, done)=>{
     // console.log(jwt_payload)
     try {
         const respuesta = await repositorio.buscarUsuarioAsociado(jwt_payload.sub);
-        // console.log(respuesta)
         if(respuesta.error){//No existe el usuario
             return done(null, false, {message: respuesta.mensajeError});
         }else if(!respuesta.error){//Usuario encontrado

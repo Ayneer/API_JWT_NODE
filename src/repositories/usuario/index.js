@@ -28,7 +28,7 @@ const crear = async usuario => {
 
         //Si no hubo error al crear el usuario
         if (resultado) {
-            
+
             respuesta.error = false;
             respuesta.data = resultado;
             respuesta.status = EXITO_OPERACION;
@@ -194,7 +194,8 @@ const listar = async () => {
                     if (element === element2.tipo_identificacion) {
                         listaUsuarios.push({
                             ...resultado[index]._doc,
-                            ...element2._doc
+                            ...element2._doc,
+                            descripcionTipoIdentificacion: element2.descripcion
                         });
                         break;
                     }
@@ -243,7 +244,7 @@ const buscar = async identificacion => {
             const dataIdentificacion = await repositorio_tipo_documento.buscar(parseInt(resultado.id_identificacion));
 
             respuesta.error = false;
-            respuesta.data = { ...resultado._doc, ...dataIdentificacion.data._doc };
+            respuesta.data = { ...resultado._doc, ...dataIdentificacion.data._doc, descripcionTipoIdentificacion: dataIdentificacion.data.descripcion };
             respuesta.status = EXITO_OPERACION;
         } else {
             respuesta.error = true;

@@ -3,6 +3,8 @@ const Rep_usuario = require('../../repositories/usuario');
 const Rep_autenticacion = require('../../repositories/autenticacion');
 const funciones = require('../funciones');
 
+const crear = async usuario => await Rep_usuario.crear(usuario);
+
 const handler = async (req, res, next) => {
 
     const {BCRYPT_ROUNDS} = process.env;
@@ -10,7 +12,7 @@ const handler = async (req, res, next) => {
     let respuesta = {};
 
     try {
-        const { correo, contraseña, id_rol, identificacion, nombres, apellidos, edad, telefono, id_identificacion } = req.body;
+        const { correo, contraseña, id_rol, identificacion, nombres, apellidos, edad, telefono, id_identificacion, id_empresa } = req.body;
         
         const usuario = {
             identificacion,
@@ -18,7 +20,8 @@ const handler = async (req, res, next) => {
             apellidos,
             edad,
             telefono,
-            id_identificacion
+            id_identificacion,
+            id_empresa
         };
         let autenticacionObj = {};
         let usuarioObj = {};
@@ -30,7 +33,7 @@ const handler = async (req, res, next) => {
             id_identificacion: identificacion
         };
 
-        respuesta = await Rep_usuario.crear(usuario);
+        respuesta = await crear(usuario);
         usuarioObj = await Rep_usuario.buscar(identificacion);
         if(!respuesta.error){//Si no hubo error al crear al usuario
             respuesta = {};
@@ -63,4 +66,4 @@ const handler = async (req, res, next) => {
 
 };
 
-module.exports = handler;
+module.exports = {handler, crear};
