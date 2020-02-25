@@ -14,9 +14,9 @@ const handler = (req, res, next) => {
         } else {
             console.log("*** comienza generacion token*****");
             const payload = {
-                sub: usuario.identificacion,
+                sub: usuario.dataUsuario.identificacion,
                 // exp: Date.now() + parseInt(120000),
-                username: usuario.correo
+                username: usuario.dataAuth.correo
             };
             const token = jwt.sign(payload, KEY_JWT, {expiresIn: 86400});//exp => 1h
             res.json({ data: { token: token, usuario } });

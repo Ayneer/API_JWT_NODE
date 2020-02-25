@@ -6,12 +6,12 @@ const funciones = require('../funciones');
 const handler = async (req, res, next) => {
 
     try {
-        const { nombre, nit, ips_padre, identificacion, nombres, apellidos, edad, telefono, id_identificacion, correo, contraseña, id_rol } = req.body;
+        const { datosEmpresa, datosUsuario, datosAutenticacion } = req.body;
 
         //Se separan e identifican los objetos
-        let empresa = { nombre, nit, ips_padre };
-        let usuario = { identificacion, nombres, apellidos, edad, telefono, id_identificacion, id_empresa: null };
-        let autenticacion = { correo, contraseña: controladorAutenticacion.encriptar(contraseña), id_rol, id_identificacion: identificacion };
+        let empresa = datosEmpresa; //{ nombre, nit, ips_padre };
+        let usuario = { ...datosUsuario, id_empresa: null }; //{ identificacion, nombres, apellidos, edad, telefono, id_identificacion, id_empresa: null };
+        let autenticacion = { ...datosAutenticacion, contraseña: controladorAutenticacion.encriptar(datosAutenticacion.contraseña), id_identificacion: datosUsuario.identificacion }; //{ correo, contraseña: controladorAutenticacion.encriptar(contraseña), id_rol, id_identificacion: identificacion };
         let respuesta = {};
 
         //Se crea la empresa...
@@ -24,20 +24,20 @@ const handler = async (req, res, next) => {
             const respuestaUsuario = await controladorUsuario.crear(usuario);
             if (respuestaUsuario.error) {//Se revierten la creaciones anteriores...
                 respuesta = respuestaUsuario;
-                await controladorEmpresa.eliminar(nit);
+                await controladorEmpresa.eliminar(empresa.nit);
             } else {
                 //Se crea la autenticacion...
                 const respuestaAutenticacion = await controladorAutenticacion.crear(autenticacion);
                 if (respuestaAutenticacion.error) {//Se revierten la creaciones anteriores...
                     respuesta = respuestaAutenticacion;
-                    await controladorEmpresa.eliminar(nit);
-                    await controladorUsuario.eliminar(identificacion);
+                    await controladorEmpresa.eliminar(empresa.nit);
+                    await controladorUsuario.eliminar(usuario.identificacion);
                 } else {
                     //Todos los objetos fueron creados y almacenados con éxito!
                     respuesta = {
-                        ...respuestaEmpresa.data,
-                        ...respuestaUsuario.data,
-                        ...respuestaAutenticacion.data,
+                        dataAuth: respuestaAutenticacion.data,
+                        dataUsuario: respuestaUsuario.data,
+                        dataEmpresa: respuestaEmpresa.data,
                         error: false,
                         status: respuestaAutenticacion.status
                     }
@@ -49,11 +49,11 @@ const handler = async (req, res, next) => {
         res.status(estado).send(respuesta);
 
     } catch (error) {
+        console.log(error)
         next(error);
     }
 }
 
 module.exports = {
     handler,
-    crear
 };

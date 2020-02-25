@@ -1,19 +1,26 @@
-const ingresar = require('./ingresar');
 const { handler: crearHandler, crear, encriptar } = require('./crear');
 const eliminar = require('./eliminar');
-const actualizar = require('./actualizar');
-const autenticar = require('./autenticar');
-const buscar = require('./buscar');
+const {handler: eliminarPorCorreosHandler, eliminarPorCorreos} = require('./eliminarPorCorreos');
+const {handler: eliminarPorIdentificacionesHandler, eliminarPorIdentificaciones} = require('./eliminarPorIdentificaciones');
+const {handler: actualizarHandler, actualizar} = require('./actualizar');
+const { handler: buscarHandler, buscar} = require('./buscar');
 const listar = require('./listar');
+const {handler: listarPorIdUsuarioHandler , listarPorIdUsuario} = require('./listarPorIdUsuario');
 
 module.exports = {
-    ingresar,
     crearHandler,
     encriptar,
     crear,
     eliminar,
     actualizar,
-    autenticar,
+    actualizarHandler,
     buscar,
+    buscarHandler,
     listar,
+    eliminarPorCorreosHandler,
+    eliminarPorCorreos,
+    eliminarPorIdentificacionesHandler,
+    eliminarPorIdentificaciones,
+    listarPorIdUsuarioHandler,
+    listarPorIdUsuario,
 }

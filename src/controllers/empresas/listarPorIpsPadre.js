@@ -1,18 +1,23 @@
 const repositorio = require('../../repositories/empresa');
 const funciones = require('../funciones');
 
-const eliminar = async nit => await repositorio.eliminar(nit);
+const listarPorIpsPadre = async ips_padre => await repositorio.listarPorIpsPadre(ips_padre);
 
 const handler = async (req, res, next) => {
+    
+    const { ips_padre } = req.body;
+
     try {
-        const {nit} = req.params;
-        const respuesta = await eliminar(nit);
+
+        const respuesta = await listarPorIpsPadre(ips_padre);
         let status = funciones.obtenerStatus(respuesta.status);
 
         res.status(status).send(respuesta);
+        
     } catch (error) {
         next(error);
     }
+
 }
 
-module.exports = {handler, eliminar};
+module.exports = {handler, listarPorIpsPadre};

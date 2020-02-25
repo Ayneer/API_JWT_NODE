@@ -2,7 +2,6 @@ const repositorio = require('../../repositories/tipoDocumentos');
 const funciones = require('../funciones');
 
 const handler = async (req, res, next) => {
-    console.log(req.user)
     try {
 
         const respuesta = await repositorio.listar();

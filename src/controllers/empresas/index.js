@@ -2,6 +2,7 @@ const { handler: crearHandler, crear } = require('./crear');
 const { handler: editarHandler, editar} = require('./editar');
 const { handler: eliminarHandler, eliminar} = require('./eliminar');
 const { handler: listarHandler, listar } = require('./listar');
+const { handler: listarPorIpsPadreHandler, listarPorIpsPadre } = require('./listarPorIpsPadre');
 const { handler: buscarHandler, buscar } = require('./buscar');
 
 module.exports = {
@@ -15,4 +16,6 @@ module.exports = {
     eliminar,
     listar,
     buscar,
+    listarPorIpsPadreHandler,
+    listarPorIpsPadre,
 }

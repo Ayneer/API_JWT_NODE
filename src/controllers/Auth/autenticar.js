@@ -3,7 +3,7 @@ const middleware = require('../../middlewares');
 
 const handler = (req, res, next) => {
     passport.authenticate('jwt', {session: false}, (error, usuario, info) => {
-        console.log("ejecutando *callback auth* de authenticate para estrategia jwt");
+        console.log("ejecutando *callback auth* de authenticate para estrategia jwt *new*");
 
         //si hubo un error relacionado con la validez del token (error en su firma, caducado, etc)
         if(info){ 
@@ -12,7 +12,6 @@ const handler = (req, res, next) => {
 
         //si hubo un error en la consulta a la base de datos
         if (error) { 
-            console.log('Error ....')
             console.log(error)
             return next(error); 
         }

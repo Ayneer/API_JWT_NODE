@@ -87,7 +87,67 @@ const listar = async () => {
                     if (element === element2.id_rol) {
                         listaAutenticacion.push({
                             ...resultado[index]._doc,
-                            ...element2._doc
+                            ...element2._doc,
+                            _idAutenticacion: resultado[index]._id
+                        });
+                        break;
+                    }
+                }
+            }
+            for (let index = 0; index < listaAutenticacion.length; index++) {
+                const element = listaAutenticacion[index];
+                delete element['contraseña'];
+            }
+            respuesta.data = listaAutenticacion;
+            respuesta.status = EXITO_OPERACION;
+        } else {
+            respuesta.error = true;
+            respuesta.codigoError = CODIGO_BUSQUEDA;
+            respuesta.status = FALLA_OPERACION;
+            respuesta.mensajeError = "No existen autenticaciones.";
+            respuesta.tipoError = VALIDACION_REGISTRO_ERROR;
+        }
+
+    } catch (error) {
+        respuesta.error = true;
+        respuesta.codigoError = error.code;
+        respuesta.status = ERROR_INTERNO;
+        respuesta.mensajeError = error.message;
+        respuesta.tipoError = error._message;
+    }
+
+    return respuesta;
+}
+
+const listarPorIdUsuario = async idsUsuarios => {
+
+    const { ERROR_INTERNO, EXITO_OPERACION, CODIGO_BUSQUEDA, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR } = process.env;
+
+    respuesta = {
+        error: null,
+        data: null,
+        codigoError: null,
+        status: null,
+        mensajeError: null,
+        tipoError: null
+    }
+
+    try {
+        const resultado = await autenticacion_modelo.find({ id_identificacion: { $in: idsUsuarios} });
+
+        if (resultado && resultado.length > 0) {
+            let listaAutenticacion = [];
+            const { data } = await repositorio_rol.listar();
+
+            for (let index = 0; index < resultado.length; index++) {
+                const element = parseInt(resultado[index].id_rol);
+                for (let index2 = 0; index2 < data.length; index2++) {
+                    const element2 = data[index2];
+                    if (element === element2.id_rol) {
+                        listaAutenticacion.push({
+                            ...resultado[index]._doc,
+                            ...element2._doc,
+                            _idAutenticacion: resultado[index]._id
                         });
                         break;
                     }
@@ -143,7 +203,8 @@ const buscar = async correo => {
             respuesta.error = false;
             respuesta.data = {
                 ...autenticacion._doc,
-                ...rol.data._doc
+                ...rol.data._doc,
+                _idAutenticacion: autenticacion._id
             };
             respuesta.status = EXITO_OPERACION;
 
@@ -207,6 +268,100 @@ const crear = async autenticacion => {
 
 }
 
+const eliminarPorCorreos = async listaCorreos => {
+    const { ERROR_INTERNO, EXITO_OPERACION, CODIGO_ELIMINACION, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR } = process.env;
+
+    respuesta = {
+        error: null,
+        data: null,
+        codigoError: null,
+        status: null,
+        mensajeError: null,
+        tipoError: null
+    }
+
+    if (listaCorreos) {
+        try {
+
+            const resultado = await autenticacion_modelo.deleteMany({ correo: { $in: listaCorreos} });
+
+            if (resultado) {
+                respuesta.error = false;
+                respuesta.data = resultado;
+                respuesta.status = EXITO_OPERACION;
+            } else {
+                respuesta.error = true;
+                respuesta.codigoError = CODIGO_ELIMINACION;
+                respuesta.status = FALLA_OPERACION;
+                respuesta.mensajeError = "No existe la autenticación con el correo enviado";
+                respuesta.tipoError = VALIDACION_REGISTRO_ERROR;
+            }
+
+        } catch (error) {
+            respuesta.error = true;
+            respuesta.codigoError = error.code;
+            respuesta.status = ERROR_INTERNO;
+            respuesta.mensajeError = error.message;
+            respuesta.tipoError = error._message;
+        }
+    } else {
+        respuesta.error = true;
+        respuesta.codigoError = CODIGO_ELIMINACION;
+        respuesta.status = FALLA_OPERACION;
+        respuesta.mensajeError = "Debe enviar los correos a eliminar";
+        respuesta.tipoError = VALIDACION_REGISTRO_ERROR;
+    }
+
+    return respuesta;
+}
+
+const eliminarPorIdentificaciones = async listaIds => {
+    const { ERROR_INTERNO, EXITO_OPERACION, CODIGO_ELIMINACION, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR } = process.env;
+
+    respuesta = {
+        error: null,
+        data: null,
+        codigoError: null,
+        status: null,
+        mensajeError: null,
+        tipoError: null
+    }
+
+    if (listaIds) {
+        try {
+
+            const resultado = await autenticacion_modelo.deleteMany({ id_identificacion: { $in: listaIds} });
+
+            if (resultado) {
+                respuesta.error = false;
+                respuesta.data = resultado;
+                respuesta.status = EXITO_OPERACION;
+            } else {
+                respuesta.error = true;
+                respuesta.codigoError = CODIGO_ELIMINACION;
+                respuesta.status = FALLA_OPERACION;
+                respuesta.mensajeError = "No existe la autenticación con la identificacion enviada";
+                respuesta.tipoError = VALIDACION_REGISTRO_ERROR;
+            }
+
+        } catch (error) {
+            respuesta.error = true;
+            respuesta.codigoError = error.code;
+            respuesta.status = ERROR_INTERNO;
+            respuesta.mensajeError = error.message;
+            respuesta.tipoError = error._message;
+        }
+    } else {
+        respuesta.error = true;
+        respuesta.codigoError = CODIGO_ELIMINACION;
+        respuesta.status = FALLA_OPERACION;
+        respuesta.mensajeError = "Debe enviar las identificaciones a eliminar";
+        respuesta.tipoError = VALIDACION_REGISTRO_ERROR;
+    }
+
+    return respuesta;
+}
+
 const eliminar = async id_identificacion => {
 
     const { ERROR_INTERNO, EXITO_OPERACION, CODIGO_ELIMINACION, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR } = process.env;
@@ -255,7 +410,7 @@ const eliminar = async id_identificacion => {
     return respuesta;
 }
 
-const editar = async (id_identificacion, actualizacion) => {
+const editar = async (_id, actualizacion) => {
 
     const { ERROR_INTERNO, EXITO_OPERACION, CODIGO_ACTUALIZACION, FALLA_OPERACION, VALIDACION_REGISTRO_ERROR } = process.env;
     
@@ -268,12 +423,17 @@ const editar = async (id_identificacion, actualizacion) => {
         tipoError: null
     }
 
-    if (id_identificacion && actualizacion) {
+    if (_id && actualizacion) {
         try {
-            const resultado = await autenticacion_modelo.findOneAndUpdate({ id_identificacion }, actualizacion, { new: true });
+            const resultado = await autenticacion_modelo.findOneAndUpdate({ _id }, actualizacion, { new: true });
+            const rol = await repositorio_rol.buscar(resultado.id_rol);//datos del rol
 
             respuesta.error = false;
-            respuesta.data = resultado;
+            respuesta.data = {
+                ...resultado._doc,
+                ...rol.data._doc,
+                _idAutenticacion: _id
+            };
             respuesta.status = EXITO_OPERACION;
 
         } catch (error) {
@@ -296,9 +456,11 @@ const editar = async (id_identificacion, actualizacion) => {
 
 module.exports = {
     buscar,
-    buscarUsuarioAsociado,
     crear,
     eliminar,
     editar,
     listar,
+    eliminarPorCorreos,
+    eliminarPorIdentificaciones, 
+    listarPorIdUsuario,
 }

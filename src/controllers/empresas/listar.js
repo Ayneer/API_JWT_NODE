@@ -4,7 +4,7 @@ const funciones = require('../funciones');
 const listar = async () => await repositorio.listar();
 
 const handler = async (req, res, next) => {
-    console.log(req.user)
+
     try {
 
         const respuesta = await listar();
