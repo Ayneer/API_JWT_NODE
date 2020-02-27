@@ -6,6 +6,8 @@ const cUsuario = require('./controllers/usuarios');
 const cTipoDocumento = require('./controllers/tipoDocumentos');
 const cAutenticacion = require('./controllers/autenticaciones');
 const cRol = require('./controllers/roles');
+const cCiudad = require('./controllers/Ciudades');
+const cDepartamento = require('./controllers/Departamentos');
 const cIps_Eps = require('./controllers/ips_eps');
 const cAuth = require('./controllers/Auth');
 
@@ -40,6 +42,20 @@ routes.put('/rol/:id_rol', cAuth.autenticar, cRol.editar);
 routes.delete('/rol/:id_rol', cAuth.autenticar, cRol.eliminar);
 routes.get('/rol', cAuth.autenticar, cRol.listar);
 routes.get('/rol/:id_rol', cAuth.autenticar, cRol.buscar);
+
+//Rutas para funcionalidades del modelo Ciudad
+routes.post('/ciudad', cAuth.autenticar, cCiudad.crearHandler);
+routes.put('/ciudad/:_id', cAuth.autenticar, cCiudad.editarHandler);
+routes.delete('/ciudad/:codigo', cAuth.autenticar, cCiudad.eliminarHandler);
+routes.get('/ciudades', cAuth.autenticar, cCiudad.listarHandler);
+routes.get('/ciudad/:codigo', cAuth.autenticar, cCiudad.buscarHandler);
+
+//Rutas para funcionalidades del modelo Departamento
+routes.post('/departamento', cAuth.autenticar, cDepartamento.crearHandler);
+routes.put('/departamento/:_id', cAuth.autenticar, cDepartamento.editarHandler);
+routes.delete('/departamento/:codigo', cAuth.autenticar, cDepartamento.eliminarHandler);
+routes.get('/departamento', cAuth.autenticar, cDepartamento.listarHandler);
+routes.get('/departamento/:codigo', cAuth.autenticar, cDepartamento.buscarHandler);
 
 //Rutas para funcionalidades de los usuarios IPS - EPS
 routes.post('/ips_eps', cAuth.autenticar, cIps_Eps.handlerCrear);//Crear una IPS/EPS

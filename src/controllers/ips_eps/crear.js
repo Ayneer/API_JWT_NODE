@@ -9,9 +9,9 @@ const handler = async (req, res, next) => {
         const { datosEmpresa, datosUsuario, datosAutenticacion } = req.body;
 
         //Se separan e identifican los objetos
-        let empresa = datosEmpresa; //{ nombre, nit, ips_padre };
-        let usuario = { ...datosUsuario, id_empresa: null }; //{ identificacion, nombres, apellidos, edad, telefono, id_identificacion, id_empresa: null };
-        let autenticacion = { ...datosAutenticacion, contraseña: controladorAutenticacion.encriptar(datosAutenticacion.contraseña), id_identificacion: datosUsuario.identificacion }; //{ correo, contraseña: controladorAutenticacion.encriptar(contraseña), id_rol, id_identificacion: identificacion };
+        let empresa = datosEmpresa;
+        let usuario = { ...datosUsuario, id_empresa: null };
+        let autenticacion = { ...datosAutenticacion, contraseña: controladorAutenticacion.encriptar(datosAutenticacion.contraseña), id_identificacion: datosUsuario.identificacion };
         let respuesta = {};
 
         //Se crea la empresa...
