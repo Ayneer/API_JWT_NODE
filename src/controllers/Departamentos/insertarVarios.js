@@ -1,14 +1,13 @@
 const repositorio = require('../../repositories/Departamento');
 const funciones = require('../funciones');
 
-const crear = async departamento => await repositorio.crear(departamento);
+const insertarVarios = async departamentos => await repositorio.insertarVarios(departamentos);
 
 const handler = async (req, res, next) => {
 
     try {
-        const { Codigo, Nombre } = req.body;
-        const departamento = { Codigo, Nombre };
-        const respuesta = await crear(departamento);
+        const { departamentos } = req.body;
+        const respuesta = await insertarVarios(departamentos);
         let status = funciones.obtenerStatus(respuesta.status);
 
         res.status(status).send(respuesta);
@@ -17,4 +16,4 @@ const handler = async (req, res, next) => {
     }
 }
 
-module.exports = {handler, crear};
+module.exports = {handler, insertarVarios};

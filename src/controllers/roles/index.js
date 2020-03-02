@@ -1,7 +1,7 @@
 const crear = require('./crear');
 const editar = require('./editar');
 const eliminar = require('./eliminar');
-const listar = require('./listar');
+const {listar, handler: listarHandler} = require('./listar');
 const buscar = require('./buscar');
 
 module.exports = {
@@ -9,5 +9,6 @@ module.exports = {
     editar,
     eliminar,
     listar,
+    listarHandler,
     buscar,
 }

@@ -40,6 +40,35 @@ const crear = async departamento => {
     return respuesta;
 }
 
+const insertarVarios = async departamentos => {
+    const { EXITO_OPERACION, ERROR_INTERNO } = process.env;
+
+    respuesta = {
+        error: null,
+        data: null,
+        codigoError: null,
+        status: null,
+        mensajeError: null,
+        tipoError: null
+    };
+
+    try {
+        const resultado = await modelo.insertMany(departamentos);
+        respuesta.error = false;
+        respuesta.data = resultado;
+        respuesta.status = EXITO_OPERACION;
+
+    } catch (error) {
+        respuesta.error = true;
+        respuesta.codigoError = error.code;
+        respuesta.status = ERROR_INTERNO;
+        respuesta.mensajeError = error.message;
+        respuesta.tipoError = error._message;
+    }
+
+    return respuesta;
+}
+
 const editar = async (_id, actualizacion) => {
 
     const { EXITO_OPERACION, ERROR_INTERNO } = process.env;
@@ -72,7 +101,7 @@ const editar = async (_id, actualizacion) => {
     return respuesta;
 }
 
-const eliminar = async codigo => {
+const eliminar = async Codigo => {
 
     const { EXITO_OPERACION, ERROR_INTERNO } = process.env;
 
@@ -87,7 +116,7 @@ const eliminar = async codigo => {
 
     try {
 
-        const resultado = await modelo.findOneAndDelete({ codigo });
+        const resultado = await modelo.findOneAndDelete({ Codigo });
 
         respuesta.error = false;
         respuesta.data = resultado;
@@ -119,7 +148,8 @@ const listar = async () => {
     try {
 
         const resultado = await modelo.find({});
-
+        // const resultado = await modelo.find
+        console.log(resultado)
         respuesta.error = false;
         respuesta.data = resultado;
         respuesta.status = EXITO_OPERACION;
@@ -135,7 +165,7 @@ const listar = async () => {
     return respuesta;
 }
 
-const buscar = async codigo => {
+const buscar = async Codigo => {
     const { EXITO_OPERACION, ERROR_INTERNO } = process.env;
 
     respuesta = {
@@ -149,7 +179,7 @@ const buscar = async codigo => {
 
     try {
 
-        const resultado = await modelo.findOne({ codigo });
+        const resultado = await modelo.findOne({ Codigo });
 
         respuesta.error = false;
         respuesta.data = resultado;
@@ -172,4 +202,5 @@ module.exports = {
     eliminar,
     listar,
     buscar,
+    insertarVarios,
 }

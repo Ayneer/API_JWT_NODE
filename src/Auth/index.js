@@ -7,8 +7,8 @@ const cAuth = require('../controllers/Auth');
 
 //Configuración de la estrategia local
 passport.use(new estrategiaLocal({
-    usernameField: "correo",
-    passwordField: "contraseña",
+    usernameField: "Correo",
+    passwordField: "Contraseña",
     session: false
 }, async (username, password, done)=>{
     const { CODIGO_BUSQUEDA = 'BUSQUEDA DEL REGISTRO' } = process.env;

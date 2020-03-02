@@ -12,9 +12,9 @@ const representanteLegalSchema = new schema({
 });
 
 const empresaSchema = new schema({
-    nombre: {type: String, required: true},//Cambiar
-    nit: {type: String, required: true, index: true, unique: true},//Cambiar
-    ips_padre: {type: String},//Cambiar
+    nombre: {type: String, required: true},//Borrar
+    nit: {type: String, required: true, index: true, unique: true},//Cambiar Nit
+    ips_padre: {type: String},//Cambiar IpsPadre
     RazonSocial: {type: String, required: true},
     NumeroLicencia: {type: String},
     CodigoHabilitacion: {type: String},

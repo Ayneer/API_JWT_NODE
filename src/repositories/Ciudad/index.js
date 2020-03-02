@@ -40,6 +40,35 @@ const crear = async ciudad => {
     return respuesta;
 }
 
+const insertarVarios = async ciudades => {
+    const { EXITO_OPERACION, ERROR_INTERNO } = process.env;
+
+    respuesta = {
+        error: null,
+        data: null,
+        codigoError: null,
+        status: null,
+        mensajeError: null,
+        tipoError: null
+    };
+
+    try {
+        const resultado = await modelo.insertMany(ciudades);
+        respuesta.error = false;
+        respuesta.data = resultado;
+        respuesta.status = EXITO_OPERACION;
+
+    } catch (error) {
+        respuesta.error = true;
+        respuesta.codigoError = error.code;
+        respuesta.status = ERROR_INTERNO;
+        respuesta.mensajeError = error.message;
+        respuesta.tipoError = error._message;
+    }
+
+    return respuesta;
+}
+
 const editar = async (_id, actualizacion) => {
 
     const { EXITO_OPERACION, ERROR_INTERNO } = process.env;
@@ -172,4 +201,5 @@ module.exports = {
     eliminar,
     listar,
     buscar,
+    insertarVarios,
 }

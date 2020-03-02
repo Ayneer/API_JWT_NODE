@@ -1,4 +1,5 @@
 const {crear, handler: crearHandler} = require('./crear');
+const {insertarVarios, handler: insertarVariosHandler} = require('./insertarVarios');
 const {editar, handler: editarHandler} = require('./editar');
 const {eliminar, handler: eliminarHandler} = require('./eliminar');
 const {listar, handler: listarHandler} = require('./listar');
@@ -15,4 +16,6 @@ module.exports = {
     eliminarHandler,
     listarHandler,
     buscarHandler,
+    insertarVarios,
+    insertarVariosHandler,
 }
